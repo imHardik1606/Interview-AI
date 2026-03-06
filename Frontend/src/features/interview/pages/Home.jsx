@@ -1,26 +1,33 @@
 import React, { useState, useRef } from "react";
 import "../style/home.scss";
-// import { useNavigate } from "react-router";
+import { useNavigate } from "react-router";
+import {useInterview} from '../hooks/useInterview.js'
 
 const Home = () => {
+    const {loading, generateReport, reports} = useInterview()
 
     const [jobDescription, setJobDescription] = useState("");
     const [selfDescription, setSelfDescription] = useState("");
     const resumeInputRef = useRef();
 
-    // const navigate = useNavigate();
 
-    const handleGenerateReport = () => {
-        console.log("Generate report clicked");
-        console.log({
-            jobDescription,
-            selfDescription,
-            resumeFile: resumeInputRef.current?.files?.[0]
-        });
+    const navigate = useNavigate();
 
-        // Temporary navigation (remove later if needed)
-        // navigate("/interview/demo");
+    console.log(reports)
+
+    const handleGenerateReport = async () => {
+        const resumeFile = resumeInputRef.current.files[0];
+        const data = await generateReport({jobDescription, selfDescription, resumeFile})
+        navigate(`/interview/${data._id}`)
     };
+
+    if(loading){
+        return(
+            <main className="loading-screen">
+                <h1>Loading your interview plan please hold tight</h1>
+            </main>
+        )
+    }
 
     return (
         <div className='home-page'>
@@ -128,6 +135,20 @@ const Home = () => {
                 <a href='#'>Help Center</a>
             </footer>
 
+            {reports.length > 0 && (
+                <div className='previous-reports'>
+                    <h2>Your Previous Interview Plans</h2>
+                    <ul>
+                        {reports.map((report) => (
+                            <li key={report._id} className="report-item" onClick={() => navigate(`/interview/${report._id}`)}>
+                                <h3>{report.title || "Untitled Position"}</h3>
+                                <p className="report-meta">Generated on {new Date(report.createdAt).toLocaleDateString()}</p>
+                                <p className="match-score">Match Score: {report.matchScore}%</p>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 };

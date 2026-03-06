@@ -1,40 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../style/interview.scss";
+import { useInterview } from "../hooks/useInterview.js";
+import { useParams } from "react-router";
 
 const NAV_ITEMS = [
   { id: "technical", label: "Technical Questions", icon: "💻" },
   { id: "behavioral", label: "Behavioral Questions", icon: "🗣️" },
   { id: "roadmap", label: "Road Map", icon: "🗺️" },
 ];
-
-const mockReport = {
-  matchScore: 72,
-  technicalQuestions: [
-    {
-      question: "Explain REST APIs",
-      intention: "Check understanding of backend communication",
-      answer: "REST APIs use HTTP methods to communicate between client and server."
-    }
-  ],
-  behavioralQuestions: [
-    {
-      question: "Tell me about a challenging project.",
-      intention: "Evaluate problem solving ability",
-      answer: "Describe a real challenge and how you solved it."
-    }
-  ],
-  preparationPlan: [
-    {
-      day: 1,
-      focus: "Revise fundamentals",
-      tasks: ["Review Java basics", "Practice arrays", "Solve 5 LeetCode problems"]
-    }
-  ],
-  skillGaps: [
-    { skill: "System Design", severity: "high" },
-    { skill: "Testing", severity: "mid" }
-  ]
-};
 
 // ── Question Card ──
 const QuestionCard = ({ item, index }) => {
@@ -87,7 +60,25 @@ const RoadMapDay = ({ day }) => (
 // ── Main Component ──
 const Interview = () => {
   const [activeNav, setActiveNav] = useState("technical");
-  const report = mockReport;
+  const {report, loading, getReportById} = useInterview()
+  const {interviewId} = useParams()
+
+  useEffect(() => {
+    if(interviewId) {
+      getReportById(interviewId);
+    }
+  }, [ interviewId ])
+
+  
+  if(loading) {
+    return (
+      <main className="loading-screen">
+        <h1>Loading your interview plan...</h1>
+      </main>
+    )
+  }
+
+  console.log(report)
 
   const getScoreClass = (score) => {
     if (score >= 80) return "score--high";
