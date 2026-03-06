@@ -1,0 +1,221 @@
+import React, { useState } from "react";
+import "../style/interview.scss";
+
+const NAV_ITEMS = [
+  { id: "technical", label: "Technical Questions", icon: "💻" },
+  { id: "behavioral", label: "Behavioral Questions", icon: "🗣️" },
+  { id: "roadmap", label: "Road Map", icon: "🗺️" },
+];
+
+const mockReport = {
+  matchScore: 72,
+  technicalQuestions: [
+    {
+      question: "Explain REST APIs",
+      intention: "Check understanding of backend communication",
+      answer: "REST APIs use HTTP methods to communicate between client and server."
+    }
+  ],
+  behavioralQuestions: [
+    {
+      question: "Tell me about a challenging project.",
+      intention: "Evaluate problem solving ability",
+      answer: "Describe a real challenge and how you solved it."
+    }
+  ],
+  preparationPlan: [
+    {
+      day: 1,
+      focus: "Revise fundamentals",
+      tasks: ["Review Java basics", "Practice arrays", "Solve 5 LeetCode problems"]
+    }
+  ],
+  skillGaps: [
+    { skill: "System Design", severity: "high" },
+    { skill: "Testing", severity: "mid" }
+  ]
+};
+
+// ── Question Card ──
+const QuestionCard = ({ item, index }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className={`q-card ${open ? 'q-card--expanded' : ''}`}>
+      <div className="q-card__header" onClick={() => setOpen(!open)}>
+        <span className="q-card__index">Q{index + 1}</span>
+        <p className="q-card__question">{item.question}</p>
+        <span className={`q-card__chevron ${open ? 'q-card__chevron--open' : ''}`}>
+          ▼
+        </span>
+      </div>
+
+      {open && (
+        <div className="q-card__body">
+          <div className="q-card__section">
+            <span className="q-card__tag q-card__tag--intention">Intention</span>
+            <p>{item.intention}</p>
+          </div>
+          <div className="q-card__section">
+            <span className="q-card__tag q-card__tag--answer">Model Answer</span>
+            <p>{item.answer}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── Roadmap Day ──
+const RoadMapDay = ({ day }) => (
+  <div className="roadmap-day">
+    <div className="roadmap-day__header">
+      <span className="roadmap-day__badge">Day {day.day}</span>
+      <h3 className="roadmap-day__focus">{day.focus}</h3>
+    </div>
+    <ul className="roadmap-day__tasks">
+      {day.tasks.map((task, i) => (
+        <li key={i}>
+          <span className="roadmap-day__bullet" />
+          {task}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+// ── Main Component ──
+const Interview = () => {
+  const [activeNav, setActiveNav] = useState("technical");
+  const report = mockReport;
+
+  const getScoreClass = (score) => {
+    if (score >= 80) return "score--high";
+    if (score >= 60) return "score--mid";
+    return "score--low";
+  };
+
+  const getSeverityClass = (severity) => {
+    switch(severity) {
+      case 'high': return 'skill-tag--high';
+      case 'mid': return 'skill-tag--medium';
+      case 'low': return 'skill-tag--low';
+      default: return 'skill-tag--medium';
+    }
+  };
+
+  return (
+    <div className="interview-page">
+      <div className="interview-layout">
+
+        {/* Left Nav */}
+        <nav className="interview-nav">
+          <div>
+            <p className="interview-nav__label">Sections</p>
+            {NAV_ITEMS.map((item) => (
+              <button
+                key={item.id}
+                className={`interview-nav__item ${
+                  activeNav === item.id ? "interview-nav__item--active" : ""
+                }`}
+                onClick={() => setActiveNav(item.id)}
+              >
+                <span className="interview-nav__icon">{item.icon}</span>
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </nav>
+
+        <div className="interview-divider" />
+
+        {/* Center Content */}
+        <main className="interview-content">
+          {activeNav === "technical" && (
+            <section>
+              <div className="content-header">
+                <h2>Technical Questions</h2>
+                <span className="content-header__count">
+                  {report.technicalQuestions.length}
+                </span>
+              </div>
+              <div className="q-list">
+                {report.technicalQuestions.map((q, i) => (
+                  <QuestionCard key={i} item={q} index={i} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {activeNav === "behavioral" && (
+            <section>
+              <div className="content-header">
+                <h2>Behavioral Questions</h2>
+                <span className="content-header__count">
+                  {report.behavioralQuestions.length}
+                </span>
+              </div>
+              <div className="q-list">
+                {report.behavioralQuestions.map((q, i) => (
+                  <QuestionCard key={i} item={q} index={i} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {activeNav === "roadmap" && (
+            <section>
+              <div className="content-header">
+                <h2>Preparation Road Map</h2>
+                <span className="content-header__count">
+                  {report.preparationPlan.length} days
+                </span>
+              </div>
+              <div className="roadmap-list">
+                {report.preparationPlan.map((day) => (
+                  <RoadMapDay key={day.day} day={day} />
+                ))}
+              </div>
+            </section>
+          )}
+        </main>
+
+        <div className="interview-divider" />
+
+        {/* Right Sidebar */}
+        <aside className="interview-sidebar">
+          <div className="match-score">
+            <p className="match-score__label">Match Score</p>
+            <div className={`match-score__ring ${getScoreClass(report.matchScore)}`}>
+              <span className="match-score__value">{report.matchScore}</span>
+              <span className="match-score__pct">%</span>
+            </div>
+            <p className="match-score__sub">
+              {report.matchScore >= 80 ? 'Strong Match' : 
+               report.matchScore >= 60 ? 'Good Match' : 'Needs Work'}
+            </p>
+          </div>
+
+          <div className="sidebar-divider" />
+
+          <div className="skill-gaps">
+            <p className="skill-gaps__label">Skill Gaps</p>
+            <div className="skill-gaps__list">
+              {report.skillGaps.map((gap, i) => (
+                <span 
+                  key={i} 
+                  className={`skill-tag ${getSeverityClass(gap.severity)}`}
+                >
+                  {gap.skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  );
+};
+
+export default Interview;
