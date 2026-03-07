@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
-import "../style/interview.scss";
 import { useInterview } from "../hooks/useInterview.js";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
+import {
+  ChevronDown,
+  Download,
+  Zap,
+  Target,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle2,
+  Loader,
+} from "lucide-react";
 
 const NAV_ITEMS = [
   { id: "technical", label: "Technical Questions", icon: "💻" },
@@ -14,30 +23,60 @@ const QuestionCard = ({ item, index }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className={`q-card ${open ? "q-card--expanded" : ""}`}>
-      <div className="q-card__header" onClick={() => setOpen(!open)}>
-        <span className="q-card__index">Q{index + 1}</span>
-        <p className="q-card__question">{item.question}</p>
-        <span
-          className={`q-card__chevron ${open ? "q-card__chevron--open" : ""}`}
-        >
-          ▼
-        </span>
-      </div>
+    <div
+      className={`bg-white rounded-lg border border-slate-200 overflow-hidden transition-all duration-300 hover:border-emerald-300 hover:shadow-md ${
+        open ? "ring-2 ring-emerald-500/20" : ""
+      }`}
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full px-6 py-4 text-left flex items-start gap-4 hover:bg-slate-50 transition-colors group"
+      >
+        <div className="flex-shrink-0">
+          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white text-sm font-semibold">
+            Q{index + 1}
+          </span>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <p className="text-slate-900 font-semibold leading-tight group-hover:text-emerald-600 transition-colors">
+            {item.question}
+          </p>
+        </div>
+
+        <div className="flex-shrink-0">
+          <ChevronDown
+            className={`w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-all duration-300 ${
+              open ? "transform rotate-180" : ""
+            }`}
+          />
+        </div>
+      </button>
 
       {open && (
-        <div className="q-card__body">
-          <div className="q-card__section">
-            <span className="q-card__tag q-card__tag--intention">
-              Intention
-            </span>
-            <p>{item.intention}</p>
+        <div className="border-t border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 px-6 py-4 space-y-4">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Target className="w-4 h-4 text-blue-600" />
+              <span className="text-xs font-bold uppercase tracking-wide text-blue-600">
+                Interview Intent
+              </span>
+            </div>
+            <p className="text-sm text-slate-700 leading-relaxed">
+              {item.intention}
+            </p>
           </div>
-          <div className="q-card__section">
-            <span className="q-card__tag q-card__tag--answer">
-              Model Answer
-            </span>
-            <p>{item.answer}</p>
+
+          <div className="border-t border-slate-200 pt-4">
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-bold uppercase tracking-wide text-emerald-600">
+                Model Answer
+              </span>
+            </div>
+            <p className="text-sm text-slate-700 leading-relaxed">
+              {item.answer}
+            </p>
           </div>
         </div>
       )}
@@ -46,26 +85,155 @@ const QuestionCard = ({ item, index }) => {
 };
 
 // ── Roadmap Day ──
-const RoadMapDay = ({ day }) => (
-  <div className="roadmap-day">
-    <div className="roadmap-day__header">
-      <span className="roadmap-day__badge">Day {day.day}</span>
-      <h3 className="roadmap-day__focus">{day.focus}</h3>
+const RoadMapDay = ({ day }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-emerald-300 hover:shadow-md transition-all">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-slate-50 transition-colors group"
+      >
+        <div className="flex items-center gap-4">
+          <div className="flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white flex items-center justify-center font-bold text-sm">
+              {day.day}
+            </div>
+          </div>
+          <h3 className="font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors">
+            {day.focus}
+          </h3>
+        </div>
+
+        <ChevronDown
+          className={`w-5 h-5 text-slate-400 transition-all duration-300 ${
+            expanded ? "transform rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {expanded && (
+        <div className="border-t border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 px-6 py-4">
+          <ul className="space-y-2">
+            {day.tasks.map((task, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 text-xs font-bold flex-shrink-0 mt-0.5">
+                  ✓
+                </span>
+                <span className="text-sm text-slate-700">{task}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
-    <ul className="roadmap-day__tasks">
-      {day.tasks.map((task, i) => (
-        <li key={i}>
-          <span className="roadmap-day__bullet" />
-          {task}
-        </li>
-      ))}
-    </ul>
-  </div>
-);
+  );
+};
+
+// ── Score Ring Component ──
+const ScoreRing = ({ score }) => {
+  const radius = 45;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (score / 100) * circumference;
+
+  const getColor = () => {
+    if (score >= 80) return "emerald";
+    if (score >= 60) return "blue";
+    return "orange";
+  };
+
+  const color = getColor();
+  // const colorMap = {
+  //   emerald: "from-emerald-500 to-emerald-600",
+  //   blue: "from-blue-500 to-blue-600",
+  //   orange: "from-orange-500 to-orange-600",
+  // };
+
+  return (
+    <div className="relative w-32 h-32 flex items-center justify-center">
+      <svg className="w-32 h-32 transform -rotate-90">
+        {/* Background circle */}
+        <circle
+          cx="64"
+          cy="64"
+          r={radius}
+          fill="none"
+          stroke="#e2e8f0"
+          strokeWidth="4"
+        />
+        {/* Progress circle */}
+        <circle
+          cx="64"
+          cy="64"
+          r={radius}
+          fill="none"
+          stroke="url(#scoreGradient)"
+          strokeWidth="4"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className="transition-all duration-1000"
+        />
+        <defs>
+          <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={color === "emerald" ? "#10b981" : color === "blue" ? "#3b82f6" : "#f97316"} />
+            <stop offset="100%" stopColor={color === "emerald" ? "#059669" : color === "blue" ? "#1d4ed8" : "#ea580c"} />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <div className="absolute text-center">
+        <div className="text-3xl font-bold text-slate-900">{score}</div>
+        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+          %
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── Skill Gap Badge ──
+const SkillGapBadge = ({ skill, severity }) => {
+  const getSeverityClass = () => {
+    switch (severity) {
+      case "high":
+        return "bg-red-100 text-red-700 border-red-300";
+      case "medium":
+        return "bg-orange-100 text-orange-700 border-orange-300";
+      case "low":
+        return "bg-emerald-100 text-emerald-700 border-emerald-300";
+      default:
+        return "bg-slate-100 text-slate-700 border-slate-300";
+    }
+  };
+
+  const getSeverityIcon = () => {
+    switch (severity) {
+      case "high":
+        return <AlertCircle className="w-3 h-3" />;
+      case "mid":
+        return <TrendingUp className="w-3 h-3" />;
+      case "low":
+        return <CheckCircle2 className="w-3 h-3" />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <span
+      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${getSeverityClass()}`}
+    >
+      {getSeverityIcon()}
+      {skill}
+    </span>
+  );
+};
 
 // ── Main Component ──
 const Interview = () => {
   const [activeNav, setActiveNav] = useState("technical");
+  const [isDownloading, setIsDownloading] = useState(false);
   const { report, loading, getReportById, generateResumepdf } = useInterview();
   const { interviewId } = useParams();
 
@@ -75,160 +243,268 @@ const Interview = () => {
     }
   }, [interviewId]);
 
-  if (loading) {
-    return (
-      <main className="loading-screen">
-        <h1>Loading your interview plan...</h1>
-      </main>
-    );
-  }
-
-  console.log(report);
-
-  const getScoreClass = (score) => {
-    if (score >= 80) return "score--high";
-    if (score >= 60) return "score--mid";
-    return "score--low";
-  };
-
-  const getSeverityClass = (severity) => {
-    switch (severity) {
-      case "high":
-        return "skill-tag--high";
-      case "mid":
-        return "skill-tag--medium";
-      case "low":
-        return "skill-tag--low";
-      default:
-        return "skill-tag--medium";
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      await generateResumepdf(interviewId);
+    } finally {
+      setIsDownloading(false);
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950">
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="w-10 h-10 text-emerald-500 animate-spin" />
+          <p className="text-slate-300 font-medium">Loading your interview plan...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!report) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Interview Plan Not Found</h2>
+          <p className="text-slate-600">We couldn't load your interview plan.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const getScoreLabel = (score) => {
+    if (score >= 80) return "Strong Match";
+    if (score >= 60) return "Good Match";
+    if (score >= 40) return "Fair Match";
+    return "Needs Improvement";
+  };
+
   return (
-    <div className="interview-page">
-      <div className="interview-layout">
-        {/* Left Nav */}
-        <nav className="interview-nav">
-          <div>
-            <p className="interview-nav__label">Sections</p>
-            {NAV_ITEMS.map((item) => (
-              <button
-                key={item.id}
-                className={`interview-nav__item ${
-                  activeNav === item.id ? "interview-nav__item--active" : ""
-                }`}
-                onClick={() => setActiveNav(item.id)}
-              >
-                <span className="interview-nav__icon">{item.icon}</span>
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </nav>
-
-        <div className="interview-divider" />
-
-        {/* Center Content */}
-        <main className="interview-content">
-          {activeNav === "technical" && (
-            <section>
-              <div className="content-header">
-                <h2>Technical Questions</h2>
-                <span className="content-header__count">
-                  {report.technicalQuestions.length}
-                </span>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="border-b border-slate-200 sticky top-0 z-30 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                <Zap className="w-6 h-6 text-white" />
               </div>
-              <div className="q-list">
-                {report.technicalQuestions.map((q, i) => (
-                  <QuestionCard key={i} item={q} index={i} />
-                ))}
-              </div>
-            </section>
-          )}
+              <span className="text-xl font-bold text-slate-900">InterviewAI</span>
+            </div>
 
-          {activeNav === "behavioral" && (
-            <section>
-              <div className="content-header">
-                <h2>Behavioral Questions</h2>
-                <span className="content-header__count">
-                  {report.behavioralQuestions.length}
-                </span>
-              </div>
-              <div className="q-list">
-                {report.behavioralQuestions.map((q, i) => (
-                  <QuestionCard key={i} item={q} index={i} />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {activeNav === "roadmap" && (
-            <section>
-              <div className="content-header">
-                <h2>Preparation Road Map</h2>
-                <span className="content-header__count">
-                  {report.preparationPlan.length} days
-                </span>
-              </div>
-              <div className="roadmap-list">
-                {report.preparationPlan.map((day) => (
-                  <RoadMapDay key={day.day} day={day} />
-                ))}
-              </div>
-            </section>
-          )}
-        </main>
-
-        <button className="button primary-button" onClick={() => {generateResumepdf(interviewId)}}>
-          <svg
-            height={"0.8rem"}
-            style={{ marginRight: "0.8rem" }}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M10.6144 17.7956 11.492 15.7854C12.2731 13.9966 13.6789 12.5726 15.4325 11.7942L17.8482 10.7219C18.6162 10.381 18.6162 9.26368 17.8482 8.92277L15.5079 7.88394C13.7092 7.08552 12.2782 5.60881 11.5105 3.75894L10.6215 1.61673C10.2916.821765 9.19319.821767 8.8633 1.61673L7.97427 3.75892C7.20657 5.60881 5.77553 7.08552 3.97685 7.88394L1.63658 8.92277C.868537 9.26368.868536 10.381 1.63658 10.7219L4.0523 11.7942C5.80589 12.5726 7.21171 13.9966 7.99275 15.7854L8.8704 17.7956C9.20776 18.5682 10.277 18.5682 10.6144 17.7956ZM19.4014 22.6899 19.6482 22.1242C20.0882 21.1156 20.8807 20.3125 21.8695 19.8732L22.6299 19.5353C23.0412 19.3526 23.0412 18.7549 22.6299 18.5722L21.9121 18.2532C20.8978 17.8026 20.0911 16.9698 19.6586 15.9269L19.4052 15.3156C19.2285 14.8896 18.6395 14.8896 18.4628 15.3156L18.2094 15.9269C17.777 16.9698 16.9703 17.8026 15.956 18.2532L15.2381 18.5722C14.8269 18.7549 14.8269 19.3526 15.2381 19.5353L15.9985 19.8732C16.9874 20.3125 17.7798 21.1156 18.2198 22.1242L18.4667 22.6899C18.6473 23.104 19.2207 23.104 19.4014 22.6899Z"></path>
-          </svg>
-          Download AI Optimized Resume
-        </button>
-
-        <div className="interview-divider" />
-
-        {/* Right Sidebar */}
-        <aside className="interview-sidebar">
-          <div className="match-score">
-            <p className="match-score__label">Match Score</p>
-            <div
-              className={`match-score__ring ${getScoreClass(report.matchScore)}`}
+            <button
+              onClick={handleDownload}
+              disabled={isDownloading}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-400 disabled:to-emerald-500 text-white font-semibold text-sm rounded-lg transition-all shadow-lg hover:shadow-xl disabled:shadow-none"
             >
-              <span className="match-score__value">{report.matchScore}</span>
-              <span className="match-score__pct">%</span>
-            </div>
-            <p className="match-score__sub">
-              {report.matchScore >= 80
-                ? "Strong Match"
-                : report.matchScore >= 60
-                  ? "Good Match"
-                  : "Needs Work"}
-            </p>
+              {isDownloading ? (
+                <>
+                  <Loader className="w-4 h-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  Download Resume
+                </>
+              )}
+            </button>
           </div>
+        </div>
+      </header>
 
-          <div className="sidebar-divider" />
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-6 sm:p-8">
+          {/* Left Navigation */}
+          <div className="lg:col-span-1">
+            <nav className="sticky top-24 space-y-2">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-500 px-4 mb-4">
+                Sections
+              </p>
 
-          <div className="skill-gaps">
-            <p className="skill-gaps__label">Skill Gaps</p>
-            <div className="skill-gaps__list">
-              {report.skillGaps.map((gap, i) => (
-                <span
-                  key={i}
-                  className={`skill-tag ${getSeverityClass(gap.severity)}`}
+              {NAV_ITEMS.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveNav(item.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
+                    activeNav === item.id
+                      ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg"
+                      : "text-slate-700 hover:bg-slate-100 text-slate-600"
+                  }`}
                 >
-                  {gap.skill}
-                </span>
+                  <span className="text-lg">{item.icon}</span>
+                  {item.label}
+                </button>
               ))}
+
+              <div className="pt-4 mt-6 border-t border-slate-200">
+                <button
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-400 disabled:to-emerald-500 text-white font-semibold text-sm rounded-lg transition-all shadow-lg hover:shadow-xl disabled:shadow-none"
+                >
+                  {isDownloading ? (
+                    <>
+                      <Loader className="w-4 h-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4" />
+                      Download Resume
+                    </>
+                  )}
+                </button>
+              </div>
+            </nav>
+          </div>
+
+          {/* Center Content */}
+          <div className="lg:col-span-2">
+            <div className="space-y-6">
+              {/* Content Header */}
+              <div className="flex items-center justify-between mb-8">
+                {activeNav === "technical" && (
+                  <div>
+                    <h2 className="text-2xl font-serif text-slate-900 font-light">
+                      Technical Questions
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-1">
+                      {report.technicalQuestions?.length || 0} questions to prepare
+                    </p>
+                  </div>
+                )}
+
+                {activeNav === "behavioral" && (
+                  <div>
+                    <h2 className="text-2xl font-serif text-slate-900 font-light">
+                      Behavioral Questions
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-1">
+                      {report.behavioralQuestions?.length || 0} questions to prepare
+                    </p>
+                  </div>
+                )}
+
+                {activeNav === "roadmap" && (
+                  <div>
+                    <h2 className="text-2xl font-serif text-slate-900 font-light">
+                      Preparation Road Map
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-1">
+                      {report.preparationPlan?.length || 0} days of structured preparation
+                    </p>
+                  </div>
+                )}
+
+                <div className="hidden sm:block">
+                  <div className="px-4 py-2 bg-emerald-100 rounded-lg">
+                    <span className="text-2xl font-bold text-emerald-700">
+                      {activeNav === "technical"
+                        ? report.technicalQuestions?.length || 0
+                        : activeNav === "behavioral"
+                        ? report.behavioralQuestions?.length || 0
+                        : report.preparationPlan?.length || 0}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Question/Roadmap List */}
+              <div className="space-y-3">
+                {activeNav === "technical" &&
+                  report.technicalQuestions?.map((q, i) => (
+                    <QuestionCard key={i} item={q} index={i} />
+                  ))}
+
+                {activeNav === "behavioral" &&
+                  report.behavioralQuestions?.map((q, i) => (
+                    <QuestionCard key={i} item={q} index={i} />
+                  ))}
+
+                {activeNav === "roadmap" &&
+                  report.preparationPlan?.map((day) => (
+                    <RoadMapDay key={day.day} day={day} />
+                  ))}
+              </div>
             </div>
           </div>
-        </aside>
+
+          {/* Right Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24 space-y-6">
+              {/* Match Score Card */}
+              <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-6 border border-slate-200">
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-600 mb-6 text-center">
+                  Match Score
+                </p>
+
+                <div className="flex justify-center mb-6">
+                  <ScoreRing score={report.matchScore || 0} />
+                </div>
+
+                <p className="text-center text-sm font-semibold text-slate-700">
+                  {getScoreLabel(report.matchScore || 0)}
+                </p>
+
+                <div className="mt-4 pt-4 border-t border-slate-200">
+                  <p className="text-xs text-slate-600 text-center leading-relaxed">
+                    {report.matchScore >= 80
+                      ? "You are well-matched for this role. Focus on fine-tuning your technical skills."
+                      : report.matchScore >= 60
+                      ? "You have a good foundation. Review the skill gaps to improve your candidacy."
+                      : report.matchScore >= 40
+                      ? "Build a strong preparation plan using the roadmap. Focus on key skill gaps."
+                      : "This role requires significant skill development. Follow the roadmap carefully."}
+                  </p>
+                </div>
+              </div>
+
+              {/* Skill Gaps Card */}
+              <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-6 border border-slate-200">
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-600 mb-4">
+                  Skill Gaps
+                </p>
+
+                <div className="space-y-2">
+                  {report.skillGaps?.map((gap, i) => (
+                    <SkillGapBadge key={i} skill={gap.skill} severity={gap.severity} />
+                  )) || (
+                    <p className="text-sm text-slate-600 text-center py-4">
+                      No skill gaps identified
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Quick Tips */}
+              <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
+                <p className="text-xs font-bold uppercase tracking-wide text-blue-600 mb-3">
+                  Quick Tips
+                </p>
+
+                <ul className="space-y-2 text-sm text-blue-900">
+                  <li className="flex items-start gap-2">
+                    <span className="text-lg mt-0.5">💡</span>
+                    <span>Practice the technical questions</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-lg mt-0.5">📋</span>
+                    <span>Follow the roadmap daily</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-lg mt-0.5">🎯</span>
+                    <span>Focus on skill gap areas</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
