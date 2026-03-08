@@ -218,30 +218,16 @@ const Login = () => {
               </button>
             </form>
 
-            {/* Divider */}
-            <div className="relative my-8">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-700"></div>
-              </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="px-3 bg-linear-to-br from-slate-900 via-slate-800 to-slate-950 text-slate-400">
-                  Don't have an account?
-                </span>
-              </div>
-            </div>
-
-            {/* Sign Up Link */}
-            <div className="text-center">
-              <p className="text-slate-400 text-sm">
-                <Link
-                  to="/register"
-                  className="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors flex items-center justify-center gap-2"
-                >
-                  Create an account
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </p>
-            </div>
+            {/* Footer */}
+            <p className="text-center text-slate-600 text-sm">
+              Don't have an account?{" "}
+              <Link
+                to="/register"
+                className="font-semibold text-red-500 hover:text-red-600 transition-colors"
+              >
+                Create one
+              </Link>
+            </p>
           </div>
         </div>
       </div>

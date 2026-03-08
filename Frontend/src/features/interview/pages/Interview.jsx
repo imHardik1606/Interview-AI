@@ -10,12 +10,59 @@ import {
   AlertCircle,
   CheckCircle2,
   Loader,
+  BookOpen,
+  ExternalLink,
 } from "lucide-react";
 
+// Static courses database
+const COURSES_DATABASE = {
+  "React": [
+    { id: 1, title: "React Complete Guide 2024", platform: "Udemy", duration: "45h", level: "Intermediate" },
+    { id: 2, title: "Advanced React Patterns", platform: "Frontend Masters", duration: "8h", level: "Advanced" },
+    { id: 3, title: "React Fundamentals", platform: "Scrimba", duration: "12h", level: "Beginner" },
+  ],
+  "JavaScript": [
+    { id: 1, title: "The Complete JavaScript Course", platform: "Udemy", duration: "69h", level: "Intermediate" },
+    { id: 2, title: "JavaScript Algorithms & Data Structures", platform: "freeCodeCamp", duration: "40h", level: "Intermediate" },
+    { id: 3, title: "You Don't Know JS", platform: "Educative", duration: "20h", level: "Advanced" },
+  ],
+  "TypeScript": [
+    { id: 1, title: "TypeScript Complete Guide", platform: "Udemy", duration: "35h", level: "Intermediate" },
+    { id: 2, title: "TypeScript for Beginners", platform: "Scrimba", duration: "8h", level: "Beginner" },
+    { id: 3, title: "Advanced TypeScript", platform: "Frontend Masters", duration: "6h", level: "Advanced" },
+  ],
+  "Node.js": [
+    { id: 1, title: "The Complete Node.js Developer Course", platform: "Udemy", duration: "45h", level: "Intermediate" },
+    { id: 2, title: "Node.js & Express Masterclass", platform: "Codecademy", duration: "30h", level: "Beginner" },
+    { id: 3, title: "Advanced Node.js Patterns", platform: "egghead.io", duration: "10h", level: "Advanced" },
+  ],
+  "Database Design": [
+    { id: 1, title: "Database Design Fundamentals", platform: "Pluralsight", duration: "4h", level: "Beginner" },
+    { id: 2, title: "SQL for Data Science", platform: "Coursera", duration: "40h", level: "Intermediate" },
+    { id: 3, title: "Advanced Database Design", platform: "edX", duration: "60h", level: "Advanced" },
+  ],
+  "System Design": [
+    { id: 1, title: "Grokking System Design Interview", platform: "Educative", duration: "20h", level: "Intermediate" },
+    { id: 2, title: "System Design Interview Course", platform: "Udemy", duration: "18h", level: "Intermediate" },
+    { id: 3, title: "Designing Data-Intensive Applications", platform: "O'Reilly", duration: "25h", level: "Advanced" },
+  ],
+  "AWS": [
+    { id: 1, title: "AWS Solutions Architect Associate", platform: "A Cloud Guru", duration: "30h", level: "Intermediate" },
+    { id: 2, title: "AWS for Beginners", platform: "Udemy", duration: "15h", level: "Beginner" },
+    { id: 3, title: "Advanced AWS Architecture", platform: "Linux Academy", duration: "35h", level: "Advanced" },
+  ],
+  "Docker": [
+    { id: 1, title: "Docker & Kubernetes Complete Guide", platform: "Udemy", duration: "22h", level: "Intermediate" },
+    { id: 2, title: "Docker Fundamentals", platform: "Pluralsight", duration: "3h", level: "Beginner" },
+    { id: 3, title: "Advanced Docker Deployment", platform: "egghead.io", duration: "8h", level: "Advanced" },
+  ],
+};
+
 const NAV_ITEMS = [
+  { id: "skillgaps", label: "Skill Gaps", icon: "📚" },
+  { id: "roadmap", label: "Road Map", icon: "🗺️" },
   { id: "technical", label: "Technical Questions", icon: "💻" },
   { id: "behavioral", label: "Behavioral Questions", icon: "🗣️" },
-  { id: "roadmap", label: "Road Map", icon: "🗺️" },
 ];
 
 // ── Question Card ──
@@ -143,11 +190,6 @@ const ScoreRing = ({ score }) => {
   };
 
   const color = getColor();
-  // const colorMap = {
-  //   emerald: "from-emerald-500 to-emerald-600",
-  //   blue: "from-blue-500 to-blue-600",
-  //   orange: "from-orange-500 to-orange-600",
-  // };
 
   return (
     <div className="relative w-32 h-32 flex items-center justify-center">
@@ -211,7 +253,7 @@ const SkillGapBadge = ({ skill, severity }) => {
     switch (severity) {
       case "high":
         return <AlertCircle className="w-3 h-3" />;
-      case "mid":
+      case "medium":
         return <TrendingUp className="w-3 h-3" />;
       case "low":
         return <CheckCircle2 className="w-3 h-3" />;
@@ -227,6 +269,101 @@ const SkillGapBadge = ({ skill, severity }) => {
       {getSeverityIcon()}
       {skill}
     </span>
+  );
+};
+
+// ── Course Card Component ──
+const CourseCard = ({ course }) => {
+  const getLevelColor = () => {
+    switch (course.level) {
+      case "Beginner":
+        return "bg-green-100 text-green-700";
+      case "Intermediate":
+        return "bg-blue-100 text-blue-700";
+      case "Advanced":
+        return "bg-purple-100 text-purple-700";
+      default:
+        return "bg-slate-100 text-slate-700";
+    }
+  };
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-lg p-4 hover:border-emerald-300 hover:shadow-md transition-all">
+      <div className="flex items-start justify-between mb-2">
+        <h4 className="font-semibold text-sm text-slate-900 flex-1 pr-2">
+          {course.title}
+        </h4>
+        <ExternalLink className="w-4 h-4 text-slate-400 shrink-0" />
+      </div>
+
+      <p className="text-xs text-slate-600 mb-3">{course.platform}</p>
+
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-slate-500">{course.duration}</span>
+        <span className={`text-xs font-semibold px-2 py-1 rounded ${getLevelColor()}`}>
+          {course.level}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+// ── Skill Gap with Courses Section ──
+const SkillGapSection = ({ gap }) => {
+  const [expanded, setExpanded] = useState(false);
+  
+  // Get random 2-3 courses for this skill
+  const getRandomCourses = () => {
+    const courses = COURSES_DATABASE[gap.skill] || [];
+    const shuffled = courses.sort(() => 0.5 - Math.random());
+    const count = Math.floor(4 * 2) + 2; // 2 or 3 courses
+    return shuffled.slice(0, count);
+  };
+
+  const courses = getRandomCourses();
+
+  return (
+    <div className="bg-white rounded-lg border border-slate-200 overflow-hidden hover:border-emerald-300 hover:shadow-md transition-all">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-slate-50 transition-colors group"
+      >
+        <div className="flex items-center gap-3">
+          <SkillGapBadge skill={gap.skill} severity={gap.severity} />
+        </div>
+
+        <ChevronDown
+          className={`w-5 h-5 text-slate-400 transition-all duration-300 ${
+            expanded ? "transform rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {expanded && (
+        <div className="border-t border-slate-200 bg-linear-to-br from-slate-50 to-slate-100 px-6 py-4">
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <BookOpen className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-bold uppercase tracking-wide text-emerald-600">
+                Recommended Courses
+              </span>
+            </div>
+            
+            <div className="space-y-3">
+              {courses.length > 0 ? (
+                courses.map((course) => (
+                  <CourseCard key={course.id} course={course} />
+                ))
+              ) : (
+                <p className="text-sm text-slate-600 py-4">
+                  No courses available for this skill yet.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -246,7 +383,10 @@ const Interview = () => {
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
+      // The hook handles all the download logic internally
       await generateResumepdf(interviewId);
+    } catch (error) {
+      console.error("Error downloading resume:", error);
     } finally {
       setIsDownloading(false);
     }
@@ -390,6 +530,17 @@ const Interview = () => {
                   </div>
                 )}
 
+                {activeNav === "skillgaps" && (
+                  <div>
+                    <h2 className="text-2xl font-serif text-slate-900 font-light">
+                      Skill Gaps & Courses
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-1">
+                      {report.skillGaps?.length || 0} skill gaps identified
+                    </p>
+                  </div>
+                )}
+
                 {activeNav === "roadmap" && (
                   <div>
                     <h2 className="text-2xl font-serif text-slate-900 font-light">
@@ -408,6 +559,8 @@ const Interview = () => {
                         ? report.technicalQuestions?.length || 0
                         : activeNav === "behavioral"
                         ? report.behavioralQuestions?.length || 0
+                        : activeNav === "skillgaps"
+                        ? report.skillGaps?.length || 0
                         : report.preparationPlan?.length || 0}
                     </span>
                   </div>
@@ -424,6 +577,11 @@ const Interview = () => {
                 {activeNav === "behavioral" &&
                   report.behavioralQuestions?.map((q, i) => (
                     <QuestionCard key={i} item={q} index={i} />
+                  ))}
+
+                {activeNav === "skillgaps" &&
+                  report.skillGaps?.map((gap, i) => (
+                    <SkillGapSection key={i} gap={gap} />
                   ))}
 
                 {activeNav === "roadmap" &&
@@ -467,7 +625,7 @@ const Interview = () => {
               {/* Skill Gaps Card */}
               <div className="bg-linear-to-br from-slate-50 to-slate-100 rounded-lg p-6 border border-slate-200">
                 <p className="text-xs font-bold uppercase tracking-wide text-slate-600 mb-4">
-                  Skill Gaps
+                  Skill Gaps Summary
                 </p>
 
                 <div className="space-y-2">
