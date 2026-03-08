@@ -13,6 +13,9 @@ import {
   LogOut,
   User,
   X,
+  ChevronDown,
+  Search,
+  FileCheck,
 } from "lucide-react";
 
 const Home = () => {
@@ -27,6 +30,20 @@ const Home = () => {
   const [error, setError] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  // Mock user data - replace with actual user data from context/state
+  const userData = {
+    id: "USER_12345",
+    name: "John Doe",
+    email: "john@example.com",
+    resumeName: "Resume_2024.pdf",
+    searchHistory: [
+      { title: "Senior Software Engineer", date: "2024-03-07" },
+      { title: "Product Manager", date: "2024-03-06" },
+      { title: "Full Stack Developer", date: "2024-03-05" },
+    ],
+  };
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -104,7 +121,7 @@ const Home = () => {
 
   if (loading) {
     return (
-      <div className="w-screen h-screen fixed inset-0 flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950">
+      <div className="w-screen h-screen fixed inset-0 flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-950">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-10 h-10 text-emerald-500 animate-spin" />
           <p className="text-slate-300 font-medium">
@@ -116,19 +133,108 @@ const Home = () => {
   }
 
   return (
-    <main className="w-screen h-screen fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 flex flex-col overflow-hidden">
+    <main className="w-screen h-screen fixed inset-0 bg-linear-to-br from-slate-900 via-slate-800 to-slate-950 flex flex-col overflow-hidden">
       {/* User Menu - Top Right */}
-      <div className="absolute top-6 right-6 z-50">
-        <button
-          onClick={() => setShowLogoutModal(true)}
-          className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center hover:shadow-lg hover:shadow-emerald-500/50 transition-all duration-300 transform hover:scale-105"
-          title="User menu"
-        >
-          <User className="w-6 h-6 text-white" />
-        </button>
+      <div className="fixed top-0 right-3.5 z-50">
+        {/* Profile Button - Hidden when menu is open */}
+        {!showProfileMenu && (
+          <button
+            onClick={() => setShowProfileMenu(true)}
+            className="w-15 h-15 rounded-full bg-linear-to-br from-emerald-500 to-emerald-600 flex items-center justify-center hover:shadow-lg hover:shadow-emerald-500/50 transition-all duration-300 transform hover:scale-110 active:scale-95 animate-in fade-in"
+            title="User menu"
+          >
+            <User size={40} className="text-white" strokeWidth={2} />
+          </button>
+        )}
+
+        {/* Profile Dropdown Menu */}
+        {showProfileMenu && (
+          <div className="fixed top-0 right-3.5 w-80 h-screen max-h-screen bg-slate-800 border border-slate-700 rounded-l-2xl shadow-2xl animate-in fade-in slide-in-from-right duration-300 flex flex-col z-50">
+            {/* Header with Close Button */}
+            <div className="bg-linear-to-r from-emerald-500 to-emerald-600 px-6 py-4 rounded-tl-2xl flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3 flex-1">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                  <User size={24} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold">{userData.name}</p>
+                  <p className="text-emerald-100 text-xs">{userData.email}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowProfileMenu(false)}
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                title="Close menu"
+              >
+                <X className="w-4.5 h-4.5 text-black" />
+              </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-4 space-y-4">
+                {/* User ID */}
+                <div className="bg-slate-700/50 rounded-lg p-3">
+                  <p className="text-xs text-slate-400 font-medium mb-1">User ID</p>
+                  <p className="text-white font-mono text-sm">{userData.id}</p>
+                </div>
+
+                {/* Resume */}
+                <div className="bg-slate-700/50 rounded-lg p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <FileCheck size={14} className="text-emerald-400" />
+                    <p className="text-xs text-slate-400 font-medium">Resume</p>
+                  </div>
+                  <p className="text-white text-sm">{userData.resumeName}</p>
+                </div>
+
+                {/* Search History */}
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Search size={16} className="text-emerald-400" />
+                    <p className="text-xs text-slate-400 font-medium">Recent Searches</p>
+                  </div>
+                  <div className="space-y-2">
+                    {userData.searchHistory.length > 0 ? (
+                      userData.searchHistory.map((search, index) => (
+                        <div
+                          key={index}
+                          className="bg-slate-700/50 rounded-lg p-2.5 hover:bg-slate-700 transition-colors cursor-pointer"
+                        >
+                          <p className="text-white text-sm font-medium truncate">
+                            {search.title}
+                          </p>
+                          <p className="text-slate-400 text-xs">
+                            {new Date(search.date).toLocaleDateString()}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-slate-400 text-sm">No search history</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer - Sticky at bottom */}
+            <div className="border-t border-slate-700 p-4 rounded-bl-2xl shrink-0 bg-slate-800">
+              <button
+                onClick={() => {
+                  setShowProfileMenu(false);
+                  setShowLogoutModal(true);
+                }}
+                className="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-black font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Logout Modal */}
+      {/* Logout Confirmation Modal */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-300">
@@ -142,7 +248,7 @@ const Home = () => {
 
             {/* Modal Content */}
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-linear-to-br from-emerald-100 to-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <LogOut className="w-8 h-8 text-emerald-600" />
               </div>
               <h3 className="text-xl font-semibold text-slate-900 mb-2">
@@ -163,7 +269,7 @@ const Home = () => {
               </button>
               <button
                 onClick={handleLogout}
-                className="flex-1 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-black font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
                 Logout
@@ -179,7 +285,7 @@ const Home = () => {
         <div className="w-full px-8 py-12 text-center">
           {/* Logo */}
           <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-linear-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
               <Zap className="w-6 h-6 text-white" />
             </div>
             <span className="text-white font-bold text-lg">InterviewAI</span>
@@ -354,11 +460,10 @@ const Home = () => {
 
             {/* Generate Button */}
             <div className="flex justify-center">
-
               <button
                 onClick={handleGenerateReport}
                 disabled={isSubmitting}
-                className="animate-in fade-in slide-in-from-bottom-2 duration-500 w-100 py-3.5 px-6 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-400 disabled:to-emerald-500 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:shadow-emerald-500/40 disabled:shadow-none focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 flex items-center justify-center gap-2 mt-2 mb-8"
+                className="animate-in fade-in slide-in-from-bottom-2 duration-500 w-100 py-3.5 px-6 bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-400 disabled:to-emerald-500 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl hover:shadow-emerald-500/40 disabled:shadow-none focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 flex items-center justify-center gap-2 mt-2 mb-8"
                 style={{ animationDelay: "0.6s" }}
               >
                 {isSubmitting ? (
@@ -408,7 +513,7 @@ const Home = () => {
                       <div className="flex items-center gap-3">
                         <div className="flex-1 h-2 bg-slate-700 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500"
+                            className="h-full bg-linear-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500"
                             style={{ width: `${report.matchScore}%` }}
                           />
                         </div>
@@ -424,7 +529,6 @@ const Home = () => {
           </section>
         )}
       </div>
-
     </main>
   );
 };

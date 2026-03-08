@@ -32,8 +32,8 @@ const QuestionCard = ({ item, index }) => {
         onClick={() => setOpen(!open)}
         className="w-full px-6 py-4 text-left flex items-start gap-4 hover:bg-slate-50 transition-colors group"
       >
-        <div className="flex-shrink-0">
-          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white text-sm font-semibold">
+        <div className="shrink-0">
+          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-emerald-500 to-emerald-600 text-white text-sm font-semibold">
             Q{index + 1}
           </span>
         </div>
@@ -44,7 +44,7 @@ const QuestionCard = ({ item, index }) => {
           </p>
         </div>
 
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <ChevronDown
             className={`w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-all duration-300 ${
               open ? "transform rotate-180" : ""
@@ -54,7 +54,7 @@ const QuestionCard = ({ item, index }) => {
       </button>
 
       {open && (
-        <div className="border-t border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 px-6 py-4 space-y-4">
+        <div className="border-t border-slate-200 bg-linear-to-br from-slate-50 to-slate-100 px-6 py-4 space-y-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Target className="w-4 h-4 text-blue-600" />
@@ -95,8 +95,8 @@ const RoadMapDay = ({ day }) => {
         className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-slate-50 transition-colors group"
       >
         <div className="flex items-center gap-4">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white flex items-center justify-center font-bold text-sm">
+          <div className="shrink-0">
+            <div className="w-10 h-10 rounded-full bg-linear-to-br from-emerald-500 to-emerald-600 text-white flex items-center justify-center font-bold text-sm">
               {day.day}
             </div>
           </div>
@@ -113,11 +113,11 @@ const RoadMapDay = ({ day }) => {
       </button>
 
       {expanded && (
-        <div className="border-t border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 px-6 py-4">
+        <div className="border-t border-slate-200 bg-linear-to-br from-slate-50 to-slate-100 px-6 py-4">
           <ul className="space-y-2">
             {day.tasks.map((task, i) => (
               <li key={i} className="flex items-start gap-3">
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 text-xs font-bold flex-shrink-0 mt-0.5">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 text-xs font-bold shrink-0 mt-0.5">
                   ✓
                 </span>
                 <span className="text-sm text-slate-700">{task}</span>
@@ -254,7 +254,7 @@ const Interview = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-950">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-10 h-10 text-emerald-500 animate-spin" />
           <p className="text-slate-300 font-medium">Loading your interview plan...</p>
@@ -289,7 +289,7 @@ const Interview = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-linear-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
                 <Zap className="w-6 h-6 text-white" />
               </div>
               <span className="text-xl font-bold text-slate-900">InterviewAI</span>
@@ -298,7 +298,7 @@ const Interview = () => {
             <button
               onClick={handleDownload}
               disabled={isDownloading}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-400 disabled:to-emerald-500 text-white font-semibold text-sm rounded-lg transition-all shadow-lg hover:shadow-xl disabled:shadow-none"
+              className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-400 disabled:to-emerald-500 text-white font-semibold text-sm rounded-lg transition-all shadow-lg hover:shadow-xl disabled:shadow-none"
             >
               {isDownloading ? (
                 <>
@@ -332,8 +332,8 @@ const Interview = () => {
                   onClick={() => setActiveNav(item.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
                     activeNav === item.id
-                      ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg"
-                      : "text-slate-700 hover:bg-slate-100 text-slate-600"
+                      ? "bg-linear-to-r from-emerald-500 to-emerald-600 text-white shadow-lg"
+                      : "text-slate-700 hover:bg-slate-100"
                   }`}
                 >
                   <span className="text-lg">{item.icon}</span>
@@ -345,7 +345,7 @@ const Interview = () => {
                 <button
                   onClick={handleDownload}
                   disabled={isDownloading}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-400 disabled:to-emerald-500 text-white font-semibold text-sm rounded-lg transition-all shadow-lg hover:shadow-xl disabled:shadow-none"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-400 disabled:to-emerald-500 text-white font-semibold text-sm rounded-lg transition-all shadow-lg hover:shadow-xl disabled:shadow-none"
                 >
                   {isDownloading ? (
                     <>
@@ -438,7 +438,7 @@ const Interview = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               {/* Match Score Card */}
-              <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-6 border border-slate-200">
+              <div className="bg-linear-to-br from-slate-50 to-slate-100 rounded-lg p-6 border border-slate-200">
                 <p className="text-xs font-bold uppercase tracking-wide text-slate-600 mb-6 text-center">
                   Match Score
                 </p>
@@ -465,7 +465,7 @@ const Interview = () => {
               </div>
 
               {/* Skill Gaps Card */}
-              <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-6 border border-slate-200">
+              <div className="bg-linear-to-br from-slate-50 to-slate-100 rounded-lg p-6 border border-slate-200">
                 <p className="text-xs font-bold uppercase tracking-wide text-slate-600 mb-4">
                   Skill Gaps
                 </p>
