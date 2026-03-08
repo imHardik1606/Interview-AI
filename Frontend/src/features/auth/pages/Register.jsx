@@ -46,12 +46,14 @@ const Register = () => {
     }
   };
 
-  if (loading) {
+   if (loading) {
     return (
       <div className="w-screen h-screen fixed inset-0 flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-950">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-10 h-10 text-emerald-500 animate-spin" />
-          <p className="text-slate-300 font-medium">Loading...</p>
+          <p className="text-slate-300 font-medium">
+            Loading...
+          </p>
         </div>
       </div>
     );
