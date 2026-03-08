@@ -285,8 +285,6 @@ Generate a comprehensive response following the exact JSON structure shown above
 
   // Validate against schema
   const validatedResponse = interviewReportSchema.parse(parsedResponse);
-
-  console.log("Generated Interview Report:", validatedResponse);
   return validatedResponse;
 }
 

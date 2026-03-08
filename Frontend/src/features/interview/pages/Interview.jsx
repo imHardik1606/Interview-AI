@@ -393,15 +393,17 @@ const Interview = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-950">
-        <div className="flex flex-col items-center gap-4">
-          <Loader className="w-10 h-10 text-emerald-500 animate-spin" />
-          <p className="text-slate-300 font-medium">Loading your interview plan...</p>
+      return (
+        <div className="w-screen h-screen fixed inset-0 flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-950">
+          <div className="flex flex-col items-center gap-4">
+            <Loader className="w-10 h-10 text-emerald-500 animate-spin" />
+            <p className="text-slate-300 font-medium">
+              Preparing your ATS friendly resume...
+            </p>
+          </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
   if (!report) {
     return (
@@ -434,30 +436,12 @@ const Interview = () => {
               </div>
               <span className="text-xl font-bold text-slate-900">InterviewAI</span>
             </div>
-
-            <button
-              onClick={handleDownload}
-              disabled={isDownloading}
-              className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-emerald-400 disabled:to-emerald-500 text-white font-semibold text-sm rounded-lg transition-all shadow-lg hover:shadow-xl disabled:shadow-none"
-            >
-              {isDownloading ? (
-                <>
-                  <Loader className="w-4 h-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4" />
-                  Download Resume
-                </>
-              )}
-            </button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto font-serif">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-6 sm:p-8">
           {/* Left Navigation */}
           <div className="lg:col-span-1">
