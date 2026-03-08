@@ -369,7 +369,7 @@ const SkillGapSection = ({ gap }) => {
 
 // ── Main Component ──
 const Interview = () => {
-  const [activeNav, setActiveNav] = useState("technical");
+  const [activeNav, setActiveNav] = useState("skillgaps");
   const [isDownloading, setIsDownloading] = useState(false);
   const { report, loading, getReportById, generateResumepdf } = useInterview();
   const { interviewId } = useParams();
@@ -619,23 +619,6 @@ const Interview = () => {
                       ? "Build a strong preparation plan using the roadmap. Focus on key skill gaps."
                       : "This role requires significant skill development. Follow the roadmap carefully."}
                   </p>
-                </div>
-              </div>
-
-              {/* Skill Gaps Card */}
-              <div className="bg-linear-to-br from-slate-50 to-slate-100 rounded-lg p-6 border border-slate-200">
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-600 mb-4">
-                  Skill Gaps Summary
-                </p>
-
-                <div className="space-y-2">
-                  {report.skillGaps?.map((gap, i) => (
-                    <SkillGapBadge key={i} skill={gap.skill} severity={gap.severity} />
-                  )) || (
-                    <p className="text-sm text-slate-600 text-center py-4">
-                      No skill gaps identified
-                    </p>
-                  )}
                 </div>
               </div>
 
